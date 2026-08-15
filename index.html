@@ -1,0 +1,166 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="LinkTruth — paste any link and find out instantly if it's real or fake. 20+ in-browser forensic checks with plain-English verdicts.">
+  <title>LinkTruth — Is that link real or fake?</title>
+
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🛡️</text></svg>">
+
+  <!-- Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Unbounded:wght@500;700;900&family=Space+Grotesk:wght@400;500;700&family=JetBrains+Mono:wght@400;600;800&display=swap" rel="stylesheet">
+
+  <!-- ✅ CSS — same folder as this file -->
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+  <canvas id="fx" aria-hidden="true"></canvas>
+  <div class="scanline" aria-hidden="true"></div>
+
+  <!-- ===================== HEADER ===================== -->
+  <header>
+    <div class="brand">
+      <svg viewBox="0 0 24 24" fill="none" aria-hidden="true">
+        <path d="M12 2 4 5v6c0 5 3.4 9.4 8 11 4.6-1.6 8-6 8-11V5l-8-3z" stroke="#3ddc97" stroke-width="1.6"/>
+        <path d="m8.5 12 2.4 2.4 4.6-4.8" stroke="#3ddc97" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/>
+      </svg>
+      LINK<em>TRUTH</em>
+    </div>
+    <div class="engine"><span class="dot"></span> HEURISTIC ENGINE v2.4 · ONLINE</div>
+    <div class="clock" id="clock">--:--:--</div>
+  </header>
+
+  <div class="ticker"><div class="ticker-track" id="tickerTrack"></div></div>
+
+  <main>
+
+    <!-- ===================== SCANNER ===================== -->
+    <section class="hero">
+      <div>
+        <p class="eyebrow">// URL FORENSICS CONSOLE</p>
+        <h1>Is that link <span class="real">real</span> —<br>or a <span class="trap">trap</span>?</h1>
+        <p class="sub">Paste any link below. LinkTruth runs <b>20+ forensic checks</b> — protocol, domain anatomy, impersonation signatures, cloaking tricks — and tells you plainly: <b>real, risky, or fake</b>.</p>
+
+        <div class="console" id="console">
+          <i class="corner c1"></i><i class="corner c2"></i><i class="corner c3"></i><i class="corner c4"></i>
+          <label for="url">PASTE LINK TO INSPECT</label>
+          <div class="inputrow">
+            <span class="prompt" aria-hidden="true">▸</span>
+            <input id="url" placeholder="https://example.com/something" autocomplete="off" spellcheck="false" aria-label="URL to inspect">
+            <button id="scanBtn">SCAN <span>→</span></button>
+          </div>
+          <div class="progress"><div class="bar" id="bar"></div></div>
+          <div class="scanlog" id="scanlog" aria-live="polite"></div>
+
+          <div class="samples">TRY:
+            <button class="chip" data-url="https://www.google.com">google.com ✓</button>
+            <button class="chip bad" data-url="http://paypa1-secure-login.tk/account/verify">paypa1-secure-login.tk ✕</button>
+            <button class="chip" data-url="bit.ly/3xK9pQr">bit.ly/3xK9pQr ?</button>
+            <button class="chip bad" data-url="https://amaz0n.co.uk.signin-alert.xyz/password">amaz0n.signin-alert.xyz ✕</button>
+            <button class="chip bad" data-url="http://198.51.100.23/banking/login">198.51.100.23 ✕</button>
+          </div>
+
+          <div class="local-note">⛨ 100% PRIVATE — analysis runs <b>in your browser</b>. The link is never uploaded anywhere.</div>
+        </div>
+      </div>
+
+      <aside class="live-term" aria-hidden="true">
+        <div class="term-head"><i></i><i></i><i></i><span>live_monitor.log — global feed</span></div>
+        <div id="liveLog"></div>
+      </aside>
+    </section>
+
+    <!-- ===================== RESULTS ===================== -->
+    <section id="results" aria-live="polite">
+      <div class="recent" id="recent"></div>
+
+      <div class="res-grid">
+        <div class="panel verdict-panel" id="verdictPanel">
+          <h3 style="width:100%">SCAN VERDICT</h3>
+          <div class="gauge-wrap">
+            <svg class="gauge" viewBox="0 0 160 160" aria-hidden="true">
+              <circle class="track" cx="80" cy="80" r="66"/>
+              <circle class="arc" id="arc" cx="80" cy="80" r="66"/>
+            </svg>
+            <div class="gauge-num"><span id="scoreNum">0</span><small>TRUST&nbsp;SCORE</small></div>
+          </div>
+          <div class="stamp" id="stamp">—</div>
+          <p class="v-msg" id="vmsg"></p>
+          <div class="plain"><b>IN PLAIN ENGLISH</b><span id="plainTxt"></span></div>
+          <div class="actions">
+            <button class="btn-sm primary" id="copyBtn">⧉ COPY REPORT</button>
+            <a class="btn-sm" id="vtLink" target="_blank" rel="noopener">VIRUSTOTAL ↗</a>
+            <a class="btn-sm" id="gbLink" target="_blank" rel="noopener">GOOGLE SAFETY ↗</a>
+            <a class="btn-sm" id="usLink" target="_blank" rel="noopener">URLSCAN ↗</a>
+          </div>
+          <div class="hint">HEURISTIC OPINION — NOT A GUARANTEE. CROSS-CHECK BEFORE TRUSTING.</div>
+        </div>
+
+        <div>
+          <div class="panel">
+            <h3>URL ANATOMY — WHAT THIS LINK ACTUALLY IS</h3>
+            <div class="url-strip" id="urlStrip"></div>
+            <table class="anat-table" id="anatTable"></table>
+          </div>
+
+          <div class="panel findings">
+            <h3>ALL FINDINGS (<span id="fcount">0</span>)</h3>
+            <div id="findList"></div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ===================== CHECKS LEDGER ===================== -->
+    <section class="sec reveal">
+      <div class="sec-head"><h2>Under the hood</h2><p>// 20+ CHECKS, SIX ATTACK SURFACES</p></div>
+      <div class="ledger">
+        <div class="led"><div class="num">01</div><div><h4>PROTOCOL INTEGRITY</h4><p>HTTPS vs plain HTTP, and rogue schemes like <code>data:</code> or <code>javascript:</code> that execute code instead of opening a page.</p></div></div>
+        <div class="led"><div class="num">02</div><div><h4>DOMAIN FORENSICS</h4><p>Raw IP hosts, Punycode homographs, random gibberish labels, hyphen chains and deep subdomain stacks.</p></div></div>
+        <div class="led"><div class="num">03</div><div><h4>TLD REPUTATION</h4><p>Domain endings ranked by abuse — free zones like <code>.tk / .ml</code> and cheap bulk TLDs that dominate phishing charts.</p></div></div>
+        <div class="led"><div class="num">04</div><div><h4>BRAND IMPERSONATION</h4><p>Leet-speak decoding (paypa1 → paypal), typo-squatting distance scoring, and brand words planted in paths.</p></div></div>
+        <div class="led"><div class="num">05</div><div><h4>CLOAKING TRICKS</h4><p>URL shorteners, the <code>@</code> decoy trick, double slashes, exotic ports and 150-character monster links.</p></div></div>
+        <div class="led"><div class="num">06</div><div><h4>PAYLOAD HINTS</h4><p>Executable downloads (<code>.exe .apk .scr</code>), stacked urgency keywords and credential-harvesting path patterns.</p></div></div>
+      </div>
+    </section>
+
+    <!-- ===================== RED FLAGS ===================== -->
+    <section class="sec reveal flags">
+      <div class="sec-head"><h2>Red flags every human should know</h2><p>// TRAIN YOUR EYES</p></div>
+      <div class="flag"><div class="bignum">01</div><div><h4>Read the domain, not the pretty text.</h4><p>In <code>paypal.com.secure-alert.xyz</code> the real site is <code>secure-alert.xyz</code> — everything before it is decoration. The true domain is always the part just before the first single slash.</p></div></div>
+      <div class="flag"><div class="bignum">02</div><div><h4>Urgency is a weapon.</h4><p>"Verify within 24 hours or your account will be locked" is pressure, not policy. Banks and services never threaten you into clicking links from messages.</p></div></div>
+      <div class="flag"><div class="bignum">03</div><div><h4>Short links are sealed envelopes.</h4><p><code>bit.ly</code>, <code>tinyurl.com</code>, <code>t.co</code> hide the destination completely. Expand them first — never open a shortened link from a stranger.</p></div></div>
+      <div class="flag"><div class="bignum">04</div><div><h4>The padlock ≠ honest.</h4><p>HTTPS only means the connection is encrypted — scammers get free certificates too. A padlock on a fake login page still shows a padlock. Check the name, not the lock.</p></div></div>
+      <div class="flag"><div class="bignum">05</div><div><h4>When in doubt, go direct.</h4><p>Never use the link from the message. Type the address yourself or use the official app. If the warning was real, it will be waiting inside your account.</p></div></div>
+    </section>
+  </main>
+
+  <!-- ===================== FOOTER ===================== -->
+  <footer>
+    <div class="foot-in">
+      <div>
+        <h5>⚠ READ THIS — IMPORTANT DISCLAIMER</h5>
+        <p>LinkTruth runs <b>heuristic pattern analysis</b> entirely in your browser. It catches structural tricks and phishing signatures, but it <b>cannot</b> verify registration age, live reputation or host blacklists — and no tool can guarantee safety. Treat every verdict as a strong hint, not a certificate.</p>
+      </div>
+      <div>
+        <h5>DOUBLE-CHECK ANY LINK AT</h5>
+        <div class="ext-links">
+          <a href="https://www.virustotal.com" target="_blank" rel="noopener">→ virustotal.com — 70+ antivirus engines</a>
+          <a href="https://transparencyreport.google.com/safe-browsing/search" target="_blank" rel="noopener">→ Google Safe Browsing report</a>
+          <a href="https://urlscan.io" target="_blank" rel="noopener">→ urlscan.io — sandboxed page scan</a>
+        </div>
+      </div>
+    </div>
+    <div class="credit">LINKTRUTH © 2026 · NOTHING LEAVES YOUR DEVICE · THINK BEFORE YOU CLICK</div>
+  </footer>
+
+  <noscript><p style="text-align:center;padding:20px;color:#ff5c6c;font-family:monospace">LinkTruth needs JavaScript enabled to run its analysis engine.</p></noscript>
+
+  <!-- ✅ JS — same folder as this file -->
+  <script src="script.js"></script>
+</body>
+</html>
