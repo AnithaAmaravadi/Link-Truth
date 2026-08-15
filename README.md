@@ -32,4 +32,4 @@ Unlike other scanners, **LinkTruth does not upload your URL to any server**. The
 *   `style.css` — Dark mode styling and animations
 *   `script.js` — The core heuristic analysis engine
 
- ## Scan Here 
+ ## Scan Here  https://anithaamaravadi.github.io/Link-Truth/
