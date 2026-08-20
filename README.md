@@ -23,7 +23,7 @@ Unlike other scanners, **LinkTruth does not upload your URL to any server**. The
 
 ## 🛠️ Tech Stack
 *   **Frontend:** HTML5, CSS3 (Grid/Flexbox)
-*   **Logic:** Vanilla JavaScript (ES6+)
+*   **Logic:** Vanilla JavaScript (ES6+) 
 *   **No Backend:** Zero server dependencies
 
 ## 📂 Project Structure
