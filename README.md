@@ -21,7 +21,7 @@ LinkTruth runs **20+ forensic checks** entirely in your browser:
 ## 🔒 Privacy First
 Unlike other scanners, **LinkTruth does not upload your URL to any server**. The analysis engine runs 100% locally on your device using JavaScript. Your links never leave your browser.
 
-## 🛠️ Tech Stack      
+## 🛠️ Tech Stack    
 *   **Frontend:** HTML5, CSS3 (Grid/Flexbox)
 *   **Logic:** Vanilla JavaScript (ES6+) 
 *   **No Backend:** Zero server dependencies
